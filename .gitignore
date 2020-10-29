@@ -18,4 +18,4 @@ cbuild
 config/config.toml
 main
 .vscode
-go.sum
+go.sum/

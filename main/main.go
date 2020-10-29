@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"log"
-	"time"
+	"fmt"
+	"github.com/garyburd/redigo/redis"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 //func main() {
@@ -167,25 +167,70 @@ import (
 //	r.Run(":8000")
 //}
 
-func main() {
-	// 1.创建路由
-	// 默认使用了2个中间件Logger(), Recovery()
-	r := gin.Default()
-	// 1.异步
-	r.GET("/long_async", func(c *gin.Context) {
-		// 需要搞一个副本
-		copyContext := c.Copy()
-		// 异步处理
-		go func() {
-			time.Sleep(3 * time.Second)
-			log.Println("异步执行：" + copyContext.Request.URL.Path)
-		}()
-	})
-	// 2.同步
-	r.GET("/long_sync", func(c *gin.Context) {
-		time.Sleep(3 * time.Second)
-		log.Println("同步执行：" + c.Request.URL.Path)
-	})
+//func main() {
+//	// 1.创建路由
+//	// 默认使用了2个中间件Logger(), Recovery()
+//	r := gin.Default()
+//	// 1.异步
+//	r.GET("/long_async", func(c *gin.Context) {
+//		// 需要搞一个副本
+//		copyContext := c.Copy()
+//		// 异步处理
+//		go func() {
+//			time.Sleep(3 * time.Second)
+//			log.Println("异步执行：" + copyContext.Request.URL.Path)
+//		}()
+//	})
+//	// 2.同步
+//	r.GET("/long_sync", func(c *gin.Context) {
+//		time.Sleep(3 * time.Second)
+//		log.Println("同步执行：" + c.Request.URL.Path)
+//	})
+//
+//	r.Run(":8000")
+//}
 
-	r.Run(":8000")
+//type Student struct {
+//	Id      string `orm:"id,primary" json:"id"`      //
+//	Name    string `orm:"name"       json:"name"`    //
+//	Age     int    `orm:"age"        json:"age"`     //
+//}
+//
+//var Db *sqlx.DB
+//
+//func init() {
+//	// 获取 MySQL 链接需要自己导入 _ "github.com/go-sql-driver/mysql" 😂
+//
+//	database, err := sqlx.Open("mysql", "root:Root5683@@tcp(127.0.0.1:3306)/myschool")
+//	//database, err := sqlx.Open("数据库类型", "用户名:密码@tcp(地址:端口)/数据库名")
+//	if err != nil {
+//		fmt.Println("open mysql failed,", err)
+//		return
+//	}
+//
+//	Db = database
+//	defer database.Close() // 注意这行代码要写在上面err判断的下面
+//}
+//
+//func main() {
+//	var stu []Student
+//	err := Db.Select(&stu, "select id, name, age from student where id=?", "27afbc17ebb944a39efb094c7de15355")
+//	if err != nil {
+//		fmt.Println("exec failed, ", err)
+//		return
+//	}
+//
+//	fmt.Println("select succ:", stu)
+//}
+
+func main() {
+	c, err := redis.Dial("tcp", "127.0.0.1:6379")
+	if err != nil {
+		fmt.Println("conn redis failed,", err)
+		return
+	}
+
+	fmt.Println("redis conn success")
+
+	defer c.Close()
 }
