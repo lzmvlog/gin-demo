@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"github.com/garyburd/redigo/redis"
+	"gin/main/routers"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -223,14 +222,21 @@ import (
 //	fmt.Println("select succ:", stu)
 //}
 
+//func main() {
+//	c, err := redis.Dial("tcp", "127.0.0.1:6379")
+//	if err != nil {
+//		fmt.Println("conn redis failed,", err)
+//		return
+//	}
+//
+//	fmt.Println("redis conn success")
+//
+//	defer c.Close()
+//}
+
 func main() {
-	c, err := redis.Dial("tcp", "127.0.0.1:6379")
-	if err != nil {
-		fmt.Println("conn redis failed,", err)
-		return
-	}
-
-	fmt.Println("redis conn success")
-
-	defer c.Close()
+	// r := gin.Default()
+	// 加载路由
+	r := routers.Router()
+	r.Run()
 }
