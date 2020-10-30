@@ -18,7 +18,7 @@ http://127.0.0.1:8080/student/save
 }
 */
 func Save(c *gin.Context) {
-	// 获取传递的参数 转换成你 struct
+	// 获取传递的参数 转换成 struct
 	var stu student.Student
 	if err := c.ShouldBindJSON(&stu); err != nil {
 		// 返回错误信息
@@ -35,6 +35,9 @@ func Save(c *gin.Context) {
 }
 
 // 根据 id 查询
+/*
+http://127.0.0.1:8080/student/select?id=1
+*/
 func SelectById(c *gin.Context) {
 	var stu []student.Student
 	// 获取查询参数
@@ -74,6 +77,9 @@ func Update(c *gin.Context) {
 }
 
 // 删除
+/*
+http://127.0.0.1:8080/student/select?id=1
+*/
 func Delete(c *gin.Context) {
 	// 获取查询参数
 	id := c.Query("id")

@@ -19,4 +19,11 @@ func Init() {
 	Db = database
 	// 关闭数据库连接
 	//defer database.Close() // 注意这行代码要写在上面err判断的下面
+
+	//c, err := redis.Dial("tcp", "localhost:6379")
+	//if err != nil {
+	//	fmt.Println("conn redis failed,", err)
+	//	return
+	//}
+
 }
