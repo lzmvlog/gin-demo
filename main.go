@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gin/main/routers"
+	"gin/routers"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -235,7 +235,7 @@ import (
 //}
 
 func main() {
-	// r := gin.Default()
+	//r := gin.Default()
 	// 加载路由
 	r := routers.Router()
 	r.Run()
