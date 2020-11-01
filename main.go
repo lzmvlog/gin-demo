@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"gin/util"
 	"github.com/garyburd/redigo/redis"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -285,92 +286,126 @@ import (
 //	log.Println(name)
 //}
 
+//func main() {
+//	// 获取操作redis的链接
+//	c, err := redis.Dial("tcp", "localhost:6379")
+//	if err != nil {
+//		log.Println("conn redis failed,", err)
+//		return
+//	}
+//
+//	//_, err = c.Do("MSet", "name", "shaojie_", "age", 22)
+//	//if err != nil {
+//	//	log.Println(err.Error())
+//	//	return
+//	//}
+//	//
+//	//result, err := redis.Strings(c.Do("MGet", "name", "age"))
+//	//if err != nil {
+//	//	log.Println("get name failed,", err)
+//	//	return
+//	//}
+//	//
+//	//for _, v := range result {
+//	//	log.Println(v)
+//	//}
+//
+//	// 设置一个key为name 值为shaojie_
+//	//_, err = c.Do("Set", "name", "shaojie_")
+//	//if err != nil {
+//	//	log.Println(err.Error())
+//	//	return
+//	//}
+//	//
+//	//// 设置过期时间 10 为秒
+//	//_, err = c.Do("expire", "name", 10)
+//	//if err != nil {
+//	//	fmt.Println(err)
+//	//	return
+//	//}
+//	//
+//	//// 取值 取一个key为name的值
+//	//name, err := redis.String(c.Do("Get", "name"))
+//	//if err != nil {
+//	//	log.Println(err.Error())
+//	//	return
+//	//}
+//	//log.Println(name)
+//	//
+//	//// 休眠十秒
+//	//time.Sleep(10 * time.Second)
+//	//
+//	//// 取值  十秒取一个key为name的值
+//	//name1, err := redis.String(c.Do("Get", "name"))
+//	//if err != nil {
+//	//	log.Println(err.Error())
+//	//	return
+//	//}
+//	//log.Println(name1)
+//
+//	// 设置一个key为namelist 值为shaojie_ 、chenghao_
+//	//_, err = c.Do("lpush", "namelist", "shaojie_","chenghao_")
+//	//if err != nil {
+//	//	log.Println(err.Error())
+//	//	return
+//	//}
+//	//
+//	//// 取值 获取一个值为 namelist的值 获取这个值之后会删除这个值
+//	//namelist, err := redis.String(c.Do("lpop", "namelist"))
+//	//if err != nil {
+//	//	log.Println("get namelist failed,", err)
+//	//	return
+//	//}
+//	//
+//	//log.Println(namelist)
+//
+//	// 设置 shaojie_ 的年龄age为21
+//	_, err = c.Do("HSet", "shaojie_", "age", 21)
+//	if err != nil {
+//		log.Println(err)
+//		return
+//	}
+//
+//	// 获取 shaojie_ 的年龄age
+//	age, err := redis.Int(c.Do("HGet", "shaojie_", "age"))
+//	if err != nil {
+//		fmt.Println("get shaojie_'s age failed,", err)
+//		return
+//	}
+//
+//	log.Println(age)
+//}
+
+//var pool *redis.Pool //创建redis连接池
+//
+//func init() {
+//	pool = &redis.Pool{ //实例化一个连接池
+//		MaxIdle: 16, //最初的连接数量
+//		// MaxActive:1000000,    //最大连接数量
+//		MaxActive:   0,   //连接池最大连接数量,不确定可以用0（0表示自动定义），按   需分配
+//		IdleTimeout: 300, //连接关闭时间 300秒 （300秒不使用自动关闭）
+//		Dial: func() (redis.Conn, error) { //要连接的redis数据库
+//			return redis.Dial("tcp", "localhost:6379")
+//		},
+//	}
+//}
+
 func main() {
-	// 获取操作redis的链接
-	c, err := redis.Dial("tcp", "localhost:6379")
+	util.Init()
+	c := util.Pool.Get() //从连接池，取一个链接
+	defer c.Close()      //函数运行结束 ，把连接放回连接池
+
+	//_, err := c.Do("Set", "abc", 200)
+	//if err != nil {
+	//	log.Println(err)
+	//	return
+	//}
+
+	r, err := redis.Int(c.Do("HGet", "shaojie_", "age"))
 	if err != nil {
-		log.Println("conn redis failed,", err)
+		fmt.Println("get abc faild :", err)
 		return
 	}
-
-	//_, err = c.Do("MSet", "name", "shaojie_", "age", 22)
-	//if err != nil {
-	//	log.Println(err.Error())
-	//	return
-	//}
-	//
-	//result, err := redis.Strings(c.Do("MGet", "name", "age"))
-	//if err != nil {
-	//	log.Println("get name failed,", err)
-	//	return
-	//}
-	//
-	//for _, v := range result {
-	//	log.Println(v)
-	//}
-
-	// 设置一个key为name 值为shaojie_
-	//_, err = c.Do("Set", "name", "shaojie_")
-	//if err != nil {
-	//	log.Println(err.Error())
-	//	return
-	//}
-	//
-	//// 设置过期时间 10 为秒
-	//_, err = c.Do("expire", "name", 10)
-	//if err != nil {
-	//	fmt.Println(err)
-	//	return
-	//}
-	//
-	//// 取值 取一个key为name的值
-	//name, err := redis.String(c.Do("Get", "name"))
-	//if err != nil {
-	//	log.Println(err.Error())
-	//	return
-	//}
-	//log.Println(name)
-	//
-	//// 休眠十秒
-	//time.Sleep(10 * time.Second)
-	//
-	//// 取值  十秒取一个key为name的值
-	//name1, err := redis.String(c.Do("Get", "name"))
-	//if err != nil {
-	//	log.Println(err.Error())
-	//	return
-	//}
-	//log.Println(name1)
-
-	// 设置一个key为namelist 值为shaojie_ 、chenghao_
-	//_, err = c.Do("lpush", "namelist", "shaojie_","chenghao_")
-	//if err != nil {
-	//	log.Println(err.Error())
-	//	return
-	//}
-	//
-	//// 取值 获取一个值为 namelist的值 获取这个值之后会删除这个值
-	//namelist, err := redis.String(c.Do("lpop", "namelist"))
-	//if err != nil {
-	//	log.Println("get namelist failed,", err)
-	//	return
-	//}
-	//
-	//log.Println(namelist)
-
-	// 设置 shaojie_ 的年龄age为21
-	_, err = c.Do("HSet", "shaojie_", "age", 21)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	// 获取 shaojie_ 的年龄age
-	age, err := redis.Int(c.Do("HGet", "shaojie_", "age"))
-	if err != nil {
-		fmt.Println("get shaojie_'s age failed,", err)
-		return
-	}
-
-	log.Println(age)
+	log.Println(r)
+	util.Pool.Close() //关闭连接池
 }
