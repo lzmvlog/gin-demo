@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"gin/util"
-	"github.com/garyburd/redigo/redis"
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	"log"
+	"net/http"
 )
 
 //func main() {
@@ -390,22 +388,159 @@ import (
 //	}
 //}
 
-func main() {
-	util.Init()
-	c := util.Pool.Get() //从连接池，取一个链接
-	defer c.Close()      //函数运行结束 ，把连接放回连接池
+//func main() {
+//	util.Init()
+//	c := util.Pool.Get() //从连接池，取一个链接
+//	defer c.Close()      //函数运行结束 ，把连接放回连接池
+//
+//	//_, err := c.Do("Set", "abc", 200)
+//	//if err != nil {
+//	//	log.Println(err)
+//	//	return
+//	//}
+//
+//	r, err := redis.Int(c.Do("HGet", "shaojie_", "age"))
+//	if err != nil {
+//		fmt.Println("get abc faild :", err)
+//		return
+//	}
+//	log.Println(r)
+//	util.Pool.Close() //关闭连接池
+//}
 
-	//_, err := c.Do("Set", "abc", 200)
-	//if err != nil {
-	//	log.Println(err)
-	//	return
-	//}
+//// 定义中间
+//func MiddleWare() gin.HandlerFunc {
+//	return func(c *gin.Context) {
+//		t := time.Now()
+//		fmt.Println("中间件开始执行了")
+//		// 设置变量到Context的key中，可以通过Get()取
+//		c.Set("request", "中间件")
+//		status := c.Writer.Status()
+//		fmt.Println("中间件执行完毕", status)
+//		t2 := time.Since(t)
+//		fmt.Println("time:", t2)
+//	}
+//}
+/*
+http://127.0.0.1:8080/intermediate
+*/
+//func main() {
+//	// 1.创建路由
+//	// 默认使用了2个中间件Logger(), Recovery()
+//	r := gin.Default()
+//	// 注册中间件
+//	r.Use(MiddleWare())
+//	// {}为了代码规范
+//	{
+//		r.GET("/intermediate", func(c *gin.Context) {
+//			// 取值
+//			req, _ := c.Get("request")
+//			fmt.Println("request:", req)
+//			// 页面接收
+//			c.JSON(200, gin.H{"request": req})
+//		})
+//
+//	}
+//	r.Run()
+//}
 
-	r, err := redis.Int(c.Do("HGet", "shaojie_", "age"))
-	if err != nil {
-		fmt.Println("get abc faild :", err)
-		return
-	}
-	log.Println(r)
-	util.Pool.Close() //关闭连接池
-}
+// 定义中间
+//func MiddleWare() gin.HandlerFunc {
+//	return func(c *gin.Context) {
+//		t := time.Now()
+//		fmt.Println("中间件开始执行了")
+//		// 设置变量到Context的key中，可以通过Get()取
+//		c.Set("request", "中间件")
+//		// 执行函数
+//		c.Next()
+//		// 中间件执行完后续的一些事情
+//		status := c.Writer.Status()
+//		fmt.Println("中间件执行完毕", status)
+//		// 从 t 开始经过得时间
+//		t2 := time.Since(t)
+//		fmt.Println("time:", t2)
+//	}
+//}
+//
+//func main() {
+//	// 1.创建路由
+//	// 默认使用了2个中间件Logger(), Recovery()
+//	r := gin.Default()
+//	// 注册中间件
+//	r.Use(MiddleWare())
+//	// {}为了代码规范
+//	{
+//		r.GET("/intermediate", func(c *gin.Context) {
+//			// 取值
+//			req, _ := c.Get("request")
+//			fmt.Println("request:", req)
+//			// 页面接收
+//			c.JSON(200, gin.H{"request": req})
+//		})
+//	}
+//	r.Run()
+//}
+
+// 定义中间
+//func MiddleWare() gin.HandlerFunc {
+//	return func(c *gin.Context) {
+//		t := time.Now()
+//		fmt.Println("中间件开始执行了")
+//		// 设置变量到Context的key中，可以通过Get()取
+//		c.Set("request", "中间件")
+//		// 执行函数
+//		c.Next()
+//		// 中间件执行完后续的一些事情
+//		status := c.Writer.Status()
+//		fmt.Println("中间件执行完毕", status)
+//		t2 := time.Since(t)
+//		fmt.Println("time:", t2)
+//	}
+//}
+//
+//func main() {
+//	// 1.创建路由
+//	// 默认使用了2个中间件Logger(), Recovery()
+//	r := gin.Default()
+//	//局部中间键使用
+//	r.GET("/intermediate", MiddleWare(), func(c *gin.Context) {
+//		// 取值
+//		req, _ := c.Get("request")
+//		fmt.Println("request:", req)
+//		// 页面接收
+//		c.JSON(200, gin.H{"request": req})
+//	})
+//	r.Run()
+//}
+
+// 定义中间
+//func myTime(c *gin.Context) {
+//	start := time.Now()
+//	c.Next()
+//	// 统计时间
+//	since := time.Since(start)
+//	fmt.Println("程序用时：", since)
+//}
+//
+//func main() {
+//	// 1.创建路由
+//	// 默认使用了2个中间件Logger(), Recovery()
+//	r := gin.Default()
+//	// 注册中间件
+//	r.Use(myTime)
+//	// {}为了代码规范
+//	shoppingGroup := r.Group("/shopping")
+//	{
+//		shoppingGroup.GET("/index", shopIndexHandler)
+//		shoppingGroup.GET("/home", shopHomeHandler)
+//	}
+//	r.Run()
+//}
+//
+//func shopIndexHandler(c *gin.Context) {
+//	time.Sleep(5 * time.Second)
+//}
+//
+//func shopHomeHandler(c *gin.Context) {
+//	time.Sleep(3 * time.Second)
+//}
