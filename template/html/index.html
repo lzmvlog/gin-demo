@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>学生信息</title>
+</head>
+<body>
+hello world
+{{ range . }}
+<h3>大家好, 我是{{.Id}}号的{{.Name}}, 年龄{{.Age}}</h3>
+{{ end }}
+
+{{ range $i, $v := . }}
+    <ol>
+        <li>{{ $i }}</li>
+        <li>{{ $v.Id }}</li>
+        <li>{{ $v.Age }}</li>
+        <li>{{ $v.Name }}</li>
+    </ol>
+{{ end }}
+</body>
+</html>
