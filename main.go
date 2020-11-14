@@ -1,8 +1,10 @@
 package main
 
 import (
-	"gin/routers"
+	"gin/app/modle/student"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
+	"xorm.io/xorm"
 )
 
 //func main() {
@@ -600,8 +602,85 @@ http://127.0.0.1:8080/intermediate
 //	r.Run()
 //}
 
+//func main() {
+//	// 注册路由
+//	r := routers.Template()
+//	r.Run()
+//}
+
+var engine *xorm.Engine
+
+// 单引擎组
 func main() {
-	// 注册路由
-	r := routers.Template()
-	r.Run()
+	var err error
+	engine, err = xorm.NewEngine("mysql", "root:Root5683@@tcp(127.0.0.1:3306)/myschool?charset=utf8")
+	if err != nil {
+		log.Println(err)
+	}
+	// 控制台打印出生成的SQL语句
+	engine.ShowSQL(true)
+	//engine.ShowDebug(true)
+	//engine.ShowError(true)
+	//engine.ShowWarn(true)
+	// 打印调试信息
+	//engine.Logger().SetLevel(core.LOG_DEBUG)
+	// 设置连接池的空闲数大小
+	engine.SetMaxIdleConns(10)
+	// 设置最大打开连接数
+	engine.SetMaxOpenConns(100)
+	// SnakeMapper 支持struct为驼峰式命名，表结构为下划线命名之间的转换，这个是默认的Mapper；
+	// SameMapper 支持结构体名称和对应的表名称以及结构体field名称与对应的表字段名称相同的命名；
+	// GonicMapper 和SnakeMapper很类似，但是对于特定词支持更好，比如ID会翻译成id而不是i_d。
+	//engine.SetMapper(core.SameMapper)
+
+	//var stu student.Student
+	//has, err := engine.Where("id=?", "1").Get(&stu)
+
+	//stu := new(student.Student)
+	//has, err := engine.Where("id=?", "1").Get(stu)
+
+	//stu := student.Student{}
+	//has, err := engine.Where("id=?", "1").Get(&stu)
+
+	stu := &student.Student{}
+	has, err := engine.Where("id=?", "1").Get(stu)
+	//has, err := engine.ID(1).Get(stu)
+
+	//stu := &student.Student{Id:"1"}
+	//has, err := engine.Get(stu)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("是否存在：", has)
+	log.Println(stu)
+
+	//如果你使用了别的命名规则映射方案，也可以自己实现一个IMapper。
+	//表名称和字段名称的映射规则默认是相同的，当然也可以设置为不同，如：
+	//engine.SetTableMapper(core.SameMapper{})
+	//engine.SetColumnMapper(core.SnakeMapper{})
+
+	//has, err = engine.Where("name=?", "少杰").Exist(&student.Student{})
+	//has, err = engine.Table(&student.Student{}).Where("name=?", "少杰").Exist()
+	has, err = engine.Exist(&student.Student{Name: "少杰"})
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("是否存在：", has)
+
 }
+
+//var eg *xorm.EngineGroup
+//// 引擎组
+//func main() {
+//	conns := []string{
+//		"postgres://postgres:root:Root5683@@tcp(127.0.0.1:3306)/myschool",  // 第一个默认是master
+//		//"postgres://postgres:127.0.0.1:3306)/myschool??charset=utf", // 第二个开始都是slave
+//		//"postgres://postgres:127.0.0.1:3306)/myschool?charset=utf",
+//	}
+//
+//	var err error
+//	eg, err = xorm.NewEngineGroup("postgres", conns)
+//	if err != nil {
+//		log.Println(err)
+//	}
+//}
