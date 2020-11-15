@@ -1,7 +1,7 @@
 package api
 
 import (
-	"gin/app/modle/student"
+	"gin/app/modle"
 	"gin/util"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -19,7 +19,7 @@ http://127.0.0.1:8080/student/save
 */
 func Save(c *gin.Context) {
 	// 获取传递的参数 转换成 struct
-	var stu student.Student
+	var stu modle.Student
 	if err := c.ShouldBindJSON(&stu); err != nil {
 		// 返回错误信息
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -39,7 +39,7 @@ func Save(c *gin.Context) {
 http://127.0.0.1:8080/student/select?id=1
 */
 func SelectById(c *gin.Context) {
-	var stu []student.Student
+	var stu []modle.Student
 	// 获取查询参数
 	id := c.Query("id")
 	err := util.Db.Select(&stu, "select id,name,age from student where id =?", id)
@@ -61,7 +61,7 @@ http://127.0.0.1:8080/student/update
 */
 func Update(c *gin.Context) {
 	// 获取传递的参数 转换成你 struct
-	var stu student.Student
+	var stu modle.Student
 	if err := c.ShouldBindJSON(&stu); err != nil {
 		// 返回错误信息
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

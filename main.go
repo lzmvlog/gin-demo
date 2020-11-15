@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gin/app/modle/student"
+	"gin/app/modle"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"xorm.io/xorm"
@@ -642,7 +642,7 @@ func main() {
 	//stu := student.Student{}
 	//has, err := engine.Where("id=?", "1").Get(&stu)
 
-	stu := &student.Student{}
+	stu := &modle.Student{}
 	has, err := engine.Where("id=?", "1").Get(stu)
 	//has, err := engine.ID(1).Get(stu)
 
@@ -661,12 +661,53 @@ func main() {
 
 	//has, err = engine.Where("name=?", "少杰").Exist(&student.Student{})
 	//has, err = engine.Table(&student.Student{}).Where("name=?", "少杰").Exist()
-	has, err = engine.Exist(&student.Student{Name: "少杰"})
+	has, err = engine.Exist(&modle.Student{Name: "少杰"})
 	if err != nil {
 		log.Println(err)
 	}
 	log.Println("是否存在：", has)
 
+	stus := make([]modle.Student, 0)
+	// Cols 查询指定字段
+	// Limit 分页查询 (显示的条数,从第几个开始)
+	err1 := engine.Where("id=?", "1").Cols("name").Limit(10, 0).Find(&stus)
+	if err1 != nil {
+		log.Println(err1)
+	}
+	log.Println("查询到的信息：", stus)
+
+	//stus := make(map[int64]student.Student)
+	//err1 := engine.Where("id=?","1").Find(&stus)
+	//if err1 != nil {
+	//	log.Println(err1)
+	//}
+	//log.Println("查询到的信息：", stus)
+
+	var strings []string
+	err = engine.Table("student").Cols("id").Find(&strings)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("查询到的信息：", strings)
+
+	//stugd := make([]modle.Student, 0)
+	//engine.Where("gradeid=?","3").Join("INNER", "grade", "grade.id = student.gradeid").Find(&stugd)
+	//if err != nil {
+	//	log.Println(err)
+	//}
+	//log.Println("查询到的信息：",stugd)
+
+	stugd := make([]Student, 0)
+	engine.Where("gradeid=?", "3").Join("INNER", "grade", "grade.id = student.gradeid").Find(&stugd)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("查询到的信息：", stugd)
+}
+
+type Student struct {
+	modle.Student `xorm:"extends"`
+	modle.Grade   `xorm:"extends"`
 }
 
 //var eg *xorm.EngineGroup
