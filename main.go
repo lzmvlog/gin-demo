@@ -703,6 +703,32 @@ func main() {
 		log.Println(err)
 	}
 	log.Println("查询到的信息：", stugd)
+
+	// Iterate 方法
+	err = engine.Where("age > ? ", 10).Iterate(new(modle.Student), func(i int, bean interface{}) error {
+		stui := bean.(*modle.Student)
+		log.Println("查询到的信息：", stui, i)
+		return nil
+	})
+
+	// Count 判断有几个
+	stuCount := new(modle.Student)
+	total, err := engine.Where("age >?", 10).Count(stuCount)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("年龄大于10的有", total, "个")
+
+	stuR := new(modle.Student)
+	rows, err := engine.Where("age >?", 10).Rows(stuR)
+	if err != nil {
+		log.Println(err)
+	}
+	for rows.Next() {
+		log.Println("========", stuR)
+		err = rows.Scan(stuR)
+	}
+	//defer rows.Close()
 }
 
 type Student struct {
