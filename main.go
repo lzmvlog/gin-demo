@@ -4,6 +4,7 @@ import (
 	"gin/app/modle"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"time"
 	"xorm.io/xorm"
 )
 
@@ -729,6 +730,32 @@ func main() {
 		err = rows.Scan(stuR)
 	}
 	//defer rows.Close()
+
+	//var stuInsert modle.Student
+	//stuInsert.Id = "3"
+	//stuInsert.Name = "王五"
+	//stuInsert.Age = 20
+	//engine.Insert(&stuInsert)
+
+	//log.Println("现在的时间是：", time.Now())
+	// 改变时区
+	engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
+	log.Println("现在的时间是：", time.Now())
+
+	//var stuInsert modle.Student
+	//stuInsert.Name = "少杰"
+	//affected, err := engine.Where("id=?", "1").Update(&stuInsert)
+	//if err != nil {
+	//	log.Println(err)
+	//}
+	//log.Println("是否更新成功：", affected)
+
+	//var stuInsert modle.Student
+	//affected, err := engine.Where("id=?", "3").Delete(&stuInsert)
+	//if err != nil {
+	//	log.Println(err)
+	//}
+	//log.Println("是否删除成功：", affected)
 }
 
 type Student struct {
